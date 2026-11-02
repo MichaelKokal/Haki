@@ -1,11 +1,16 @@
 import express from "express";
+import path from "node:path";
 import { MsEdgeTTS, OUTPUT_FORMAT } from "msedge-tts";
 
 const PORT = process.env.PORT || 3000;
+const PUBLIC_DIR = path.join(import.meta.dirname, "public");
 
 const app = express();
 app.use(express.json({ limit: "64kb" }));
-app.use(express.static("public"));
+app.use(express.static(PUBLIC_DIR));
+
+// Vercel serves public/ from its CDN but sends "/" to this server, so serve the page explicitly.
+app.get("/", (req, res) => res.sendFile(path.join(PUBLIC_DIR, "index.html")));
 
 // Natural (neural) voices from Microsoft Edge's read-aloud service. There is no Palestinian
 // voice, so Palestinian uses the Jordanian ones, the closest accent available.
@@ -61,9 +66,13 @@ async function translate(arabic) {
   let english;
   try {
     english = await translateGoogle(arabic);
-  } catch (error) {
-    console.error("translate (google):", error.message);
-    english = await translateMyMemory(arabic);
+  } catch (googleError) {
+    console.error("translate (google):", googleError.message);
+    try {
+      english = await translateMyMemory(arabic);
+    } catch (memoryError) {
+      throw new Error(`Google: ${googleError.message}; MyMemory: ${memoryError.message}`);
+    }
   }
   translationCache.set(arabic, english);
   return english;
@@ -74,7 +83,7 @@ async function translateGoogle(arabic) {
   const url = new URL("https://translate.googleapis.com/translate_a/single");
   url.search = new URLSearchParams({ client: "gtx", sl: "ar", tl: "en", dt: "t", q: arabic });
   const response = await fetch(url);
-  if (!response.ok) throw new Error(`status ${response.status}`);
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const data = await response.json();
   return data[0].map((segment) => segment[0]).join("");
 }
@@ -87,6 +96,7 @@ async function translateMyMemory(arabic) {
   if (process.env.MYMEMORY_EMAIL) url.searchParams.set("de", process.env.MYMEMORY_EMAIL);
 
   const response = await fetch(url);
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const data = await response.json();
   const status = Number(data.responseStatus);
   if (status !== 200) throw new Error(data.responseDetails || `MyMemory status ${status}`);
@@ -109,7 +119,7 @@ app.post("/api/translate", async (req, res) => {
     res.end(await translate(arabic));
   } catch (error) {
     console.error("translate:", error.message);
-    res.status(502).end();
+    res.status(502).end(`Translation unavailable (${error.message})`);
   }
 });
 
