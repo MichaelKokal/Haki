@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Haki</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600&family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <span class="brand-ar" lang="ar">حكي</span>
+      <span class="brand-en">Haki</span>
+    </div>
+    <label class="dialect">
+      Dialect
+      <select id="dialect">
+        <option value="ar-PS" selected>Palestinian</option>
+        <option value="ar-JO">Jordanian</option>
+        <option value="ar-LB">Lebanese</option>
+        <option value="ar-SY">Syrian</option>
+      </select>
+    </label>
+  </header>
+
+  <main>
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-mode="practice" role="tab">Practice a phrase</button>
+      <button class="tab" data-mode="free" role="tab">Free talk</button>
+    </div>
+
+    <section id="unsupported" class="notice" hidden>
+      Live speech recognition isn't available in this browser. Open this page in <strong>Chrome</strong> or <strong>Edge</strong>.
+    </section>
+
+    <section id="target-card" class="card target">
+      <div id="modules" class="modules" role="tablist" aria-label="Practice modules"></div>
+      <div class="target-nav">
+        <button id="prev" class="icon-btn" aria-label="Previous phrase">‹</button>
+        <span id="target-count" class="muted"></span>
+        <button id="next" class="icon-btn" aria-label="Next phrase">›</button>
+      </div>
+      <p id="target-ar" class="arabic big" lang="ar" dir="rtl"></p>
+      <p id="target-tr" class="translit"></p>
+      <p id="target-en" class="english"></p>
+      <p id="target-note" class="usage-note" hidden></p>
+      <p class="focus"><span class="muted">Listen for:</span> <span id="target-focus"></span></p>
+      <div class="listen-row">
+        <button id="listen" class="ghost-btn">🔊 Listen</button>
+        <button id="listen-slow" class="ghost-btn">🐢 Slow</button>
+        <select id="voice" aria-label="Voice">
+          <option value="female">Woman's voice</option>
+          <option value="male">Man's voice</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="mic-wrap">
+      <button id="mic" class="mic" aria-label="Start speaking">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2Z"/></svg>
+      </button>
+      <p id="mic-hint" class="muted">Tap and speak</p>
+    </section>
+
+    <section class="card live">
+      <div class="live-row">
+        <span class="label">You said</span>
+        <p id="live-ar" class="arabic" lang="ar" dir="rtl"><span class="placeholder">…</span></p>
+      </div>
+      <div class="live-row">
+        <span class="label">English</span>
+        <p id="live-en" class="english-live"><span class="placeholder">Translation appears here as you speak</span></p>
+        <div id="slang-hints" class="slang-hints" hidden></div>
+      </div>
+    </section>
+
+    <section id="result" class="card result" hidden>
+      <div id="result-body" hidden>
+        <div class="score-row">
+          <div class="score-ring" id="score-ring">
+            <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" class="ring-bg"/><circle cx="60" cy="60" r="52" class="ring-fg" id="ring-fg"/></svg>
+            <span id="score">0</span>
+          </div>
+          <div>
+            <p id="verdict" class="verdict"></p>
+            <p class="muted small">Heard as: <span id="heard-tr"></span></p>
+          </div>
+        </div>
+
+        <h3>Word by word</h3>
+        <div id="words" class="words" dir="rtl"></div>
+
+        <h3>What to work on</h3>
+        <ol id="tips" class="tips"></ol>
+
+        <div class="say-it">
+          <span class="label">Say it like this</span>
+          <p id="corrected-ar" class="arabic" lang="ar" dir="rtl"></p>
+          <p id="corrected-tr" class="translit"></p>
+          <div class="listen-row start">
+            <button id="listen-corrected" class="ghost-btn">🔊 Listen</button>
+            <button id="listen-corrected-slow" class="ghost-btn">🐢 Slow</button>
+          </div>
+        </div>
+      </div>
+      <p id="result-note" class="muted" hidden>
+        Scores compare you against a target phrase, so free talk shows the translation only.
+        Switch to <strong>Practice a phrase</strong> for a score and tips.
+      </p>
+    </section>
+
+    <p class="footnote muted small">
+      Scores are based on what the speech recognizer understood, so they measure how clearly a listener would get you, not a lab-grade phonetic analysis.
+    </p>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
