@@ -10,7 +10,12 @@ app.use(express.json({ limit: "64kb" }));
 app.use(express.static(PUBLIC_DIR));
 
 // Vercel serves public/ from its CDN but sends "/" to this server, so serve the page explicitly.
-app.get("/", (req, res) => res.sendFile(path.join(PUBLIC_DIR, "index.html")));
+// The process.cwd() path lets Vercel bundle the file; if it's still missing, use the CDN copy.
+app.get("/", (req, res) =>
+  res.sendFile(path.join(process.cwd(), "public", "index.html"), (error) => {
+    if (error) res.redirect("/index.html");
+  }),
+);
 
 // Natural (neural) voices from Microsoft Edge's read-aloud service. There is no Palestinian
 // voice, so Palestinian uses the Jordanian ones, the closest accent available.
