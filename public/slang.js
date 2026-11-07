@@ -30,6 +30,12 @@ export const SLANG = [
   { forms: ["أخوي", "اخوي"], english: "my brother (also 'bro')" },
   { forms: ["حبيبي", "حبيبتي"], english: "my dear / buddy" },
   { forms: ["يا عيني"], english: "aww / my dear" },
+  { forms: ["جوعان موت"], english: "starving (literally 'hungry to death')" },
+  { forms: ["زهقت", "زهقان", "زهقانة"], english: "bored / fed up" },
+  { forms: ["مضايق", "مضايقة"], english: "upset / annoyed" },
+  { forms: ["مش مصدق", "مش مصدقة"], english: "I can't believe it" },
+  { forms: ["يا حرام"], english: "aw, poor thing" },
+  { forms: ["الله يسامحك"], english: "oh, come on (mild scolding)" },
   { forms: ["خلص"], english: "enough / done / okay" },
 ];
 

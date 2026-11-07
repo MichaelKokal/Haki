@@ -145,4 +145,22 @@ export const MODULES = [
       { arabic: "بدفع كاش", transliteration: "badfaʿ kāsh", english: "I'll pay cash", focus: "final ʿ (ع)" },
     ],
   },
+  {
+    id: "feelings",
+    name: "Feelings",
+    icon: "💬",
+    phrases: [
+      { arabic: "مبسوط كتير", transliteration: "mabsūṭ ktīr", english: "I'm really happy", focus: "ṭ (ط) — heavy t", note: "Women say mabsūṭa." },
+      { arabic: "أنا تعبان", transliteration: "ana taʿbān", english: "I'm tired", focus: "ʿ (ع)" },
+      { arabic: "نعسان", transliteration: "naʿsān", english: "I'm sleepy", focus: "ʿ (ع)" },
+      { arabic: "جوعان موت", transliteration: "jūʿān mōt", english: "I'm starving", focus: "ʿ (ع), long ū", note: "Literally \"hungry to death\"." },
+      { arabic: "زهقت", say: "زهئت", transliteration: "zhiʾt", english: "I'm bored / fed up", focus: "ق → glottal stop" },
+      { arabic: "أنا مضايق", say: "أنا مضايئ", transliteration: "ana mḍāyiʾ", english: "I'm upset", focus: "ḍ (ض), ق → glottal stop" },
+      { arabic: "زعلان مني؟", say: "زعلان منّي؟", transliteration: "zaʿlān minni?", english: "Are you upset with me?", focus: "ʿ (ع), doubled nn" },
+      { arabic: "خايف", transliteration: "khāyif", english: "I'm scared", focus: "kh (خ)" },
+      { arabic: "مش مصدق", say: "مش مصدّئ", transliteration: "mish mṣaddiʾ", english: "I can't believe it", focus: "ṣ (ص), ق → glottal stop" },
+      { arabic: "يا حرام", transliteration: "ya ḥarām", english: "Aw, poor thing", focus: "ḥ (ح)", note: "Said out of sympathy, not about something being forbidden." },
+      { arabic: "الله يسامحك", transliteration: "alla ysāmḥak", english: "God forgive you (oh, come on)", focus: "ḥ (ح)", note: "Mild, half-joking scolding." },
+    ],
+  },
 ];
