@@ -148,7 +148,7 @@ export const MODULES = [
   {
     id: "feelings",
     name: "Feelings",
-    icon: "💬",
+    icon: "😊",
     phrases: [
       { arabic: "مبسوط كتير", transliteration: "mabsūṭ ktīr", english: "I'm really happy", focus: "ṭ (ط) — heavy t", note: "Women say mabsūṭa." },
       { arabic: "أنا تعبان", transliteration: "ana taʿbān", english: "I'm tired", focus: "ʿ (ع)" },

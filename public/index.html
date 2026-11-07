@@ -29,6 +29,7 @@
     <div class="tabs" role="tablist">
       <button class="tab active" data-mode="practice" role="tab">Practice a phrase</button>
       <button class="tab" data-mode="free" role="tab">Free talk</button>
+      <button class="tab" data-mode="songs" role="tab">Songs</button>
     </div>
 
     <section id="unsupported" class="notice" hidden>
@@ -42,6 +43,8 @@
         <span id="target-count" class="muted"></span>
         <button id="next" class="icon-btn" aria-label="Next phrase">›</button>
       </div>
+      <p id="song-meta" class="song-meta" hidden><span id="song-title" class="song-title" lang="ar" dir="rtl"></span> · <span id="song-about"></span></p>
+      <div id="line-dots" class="line-dots" hidden></div>
       <p id="target-ar" class="arabic big" lang="ar" dir="rtl"></p>
       <p id="target-tr" class="translit"></p>
       <p id="target-en" class="english"></p>
@@ -103,6 +106,11 @@
             <button id="listen-corrected" class="ghost-btn">🔊 Listen</button>
             <button id="listen-corrected-slow" class="ghost-btn">🐢 Slow</button>
           </div>
+        </div>
+
+        <div id="song-next" class="song-next" hidden>
+          <p id="song-summary" class="muted small"></p>
+          <button id="next-line" class="next-line">Next line ›</button>
         </div>
       </div>
       <p id="result-note" class="muted" hidden>

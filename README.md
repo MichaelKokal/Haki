@@ -13,7 +13,8 @@ Tap the mic and say a phrase. Haki shows your Arabic as you speak, translates it
 - **Pronunciation score (0–100)** with a word-by-word breakdown: green for good, amber for close, red for missed.
 - **Targeted tips** for the sounds English speakers struggle with: ح, ع, خ, غ, ص, ط, ض, and ق said as a glottal stop.
 - **Listen and Slow playback** in a natural neural voice (woman's or man's), not a robotic one.
-- **79 everyday phrases in 9 modules:** Greetings, Slang, Everyday, People, Places, Food & drink, Vacation, School, Shopping.
+- **90 everyday phrases in 10 modules:** Greetings, Slang, Everyday, People, Places, Food & drink, Vacation, School, Shopping, Feelings.
+- **Songs:** sing well-known folk songs (Ya Zarif al-Tul, Dal'ona, Yamma Mweil al-Hawa…) line by line. Each line gets graded, and your best score per line is saved.
 - **Real spoken dialect, not formal Arabic:** biddi, mish, ma baʿrifsh, hād/hāy, ishi, zāki, hayni jāy…
 - **Four dialects:** Palestinian (default), Jordanian, Lebanese, Syrian.
 - **Free talk mode** to say anything and see it translated.
@@ -50,6 +51,7 @@ public/
   app.js            Mic, live transcript, translation, playback, results
   scorer.js         Pronunciation scoring and tips
   phrases.js        Practice modules and phrases
+  songs.js          Songs, split into lines to practice
   slang.js          Slang dictionary and matcher
   styles.css        Styles (light and dark mode)
 ```
@@ -68,6 +70,8 @@ Add an entry to a module in [`public/phrases.js`](public/phrases.js):
   note: "Sāda = no sugar.",          // optional usage note
 }
 ```
+
+Song lines in [`public/songs.js`](public/songs.js) use the same fields. Keep the transliteration word for word with the Arabic so the word-by-word breakdown lines up.
 
 ## Limitations
 

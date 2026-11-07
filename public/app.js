@@ -1,32 +1,39 @@
 import { MODULES } from "./phrases.js";
 import { scoreLocally, normalize, phraseSimilarity } from "./scorer.js";
 import { findSlang } from "./slang.js";
+import { SONGS } from "./songs.js";
 
 const $ = (id) => document.getElementById(id);
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 const state = {
   mode: "practice",
-  moduleIndex: 0,
-  phraseIndex: 0,
+  // Where you are in each tab: which module or song, and which phrase or line in it.
+  // Free talk has no card, so it keeps the practice position for known translations.
+  pos: { practice: { group: 0, item: 0 }, songs: { group: 0, item: 0 } },
   listening: false,
   finalText: "",
   alternatives: [],
   confidences: [],
 };
 
-// ---------- Practice modules ----------
+// ---------- Practice modules and songs ----------
 
-const currentPhrases = () => MODULES[state.moduleIndex].phrases;
-const currentPhrase = () => currentPhrases()[state.phraseIndex];
+const inSongs = () => state.mode === "songs";
+const groups = () => (inSongs() ? SONGS : MODULES);
+const pos = () => state.pos[inSongs() ? "songs" : "practice"];
+const currentGroup = () => groups()[pos().group];
+const currentPhrases = () => currentGroup().phrases || currentGroup().lines;
+const currentPhrase = () => currentPhrases()[pos().item];
 
 function renderModules() {
+  $("modules").setAttribute("aria-label", inSongs() ? "Songs" : "Practice modules");
   $("modules").replaceChildren(
-    ...MODULES.map((module, i) => {
+    ...groups().map((group, i) => {
       const button = document.createElement("button");
-      button.className = `module${i === state.moduleIndex ? " active" : ""}`;
+      button.className = `module${i === pos().group ? " active" : ""}`;
       button.setAttribute("role", "tab");
-      button.textContent = `${module.icon} ${module.name}`;
+      button.textContent = `${group.icon} ${group.name}`;
       button.onclick = () => selectModule(i);
       return button;
     }),
@@ -34,10 +41,10 @@ function renderModules() {
 }
 
 function selectModule(index) {
-  state.moduleIndex = index;
-  state.phraseIndex = 0;
+  pos().group = index;
+  pos().item = 0;
   try {
-    localStorage.setItem("haki-module", MODULES[index].id);
+    localStorage.setItem(inSongs() ? "haki-song" : "haki-module", groups()[index].id);
   } catch {}
   renderModules();
   showPhrase();
@@ -45,25 +52,89 @@ function selectModule(index) {
 
 function showPhrase() {
   const p = currentPhrase();
+  const count = currentPhrases().length;
   $("target-ar").textContent = p.arabic;
   $("target-tr").textContent = p.transliteration;
   $("target-en").textContent = p.english;
   $("target-focus").textContent = p.focus;
   $("target-note").textContent = p.note || "";
   $("target-note").hidden = !p.note;
-  $("target-count").textContent = `${MODULES[state.moduleIndex].name} · ${state.phraseIndex + 1} / ${currentPhrases().length}`;
+  $("target-count").textContent = inSongs()
+    ? `Line ${pos().item + 1} / ${count}`
+    : `${currentGroup().name} · ${pos().item + 1} / ${count}`;
+  $("song-meta").hidden = !inSongs();
+  if (inSongs()) {
+    $("song-title").textContent = currentGroup().arabicName;
+    $("song-about").textContent = currentGroup().about;
+  }
+  renderLineDots();
   resetOutput();
 }
 
-$("prev").onclick = () => {
+function goTo(item) {
   const count = currentPhrases().length;
-  state.phraseIndex = (state.phraseIndex - 1 + count) % count;
+  pos().item = (item + count) % count;
   showPhrase();
-};
-$("next").onclick = () => {
-  state.phraseIndex = (state.phraseIndex + 1) % currentPhrases().length;
-  showPhrase();
-};
+}
+
+$("prev").onclick = () => goTo(pos().item - 1);
+$("next").onclick = () => goTo(pos().item + 1);
+
+// ---------- Song progress ----------
+
+// Best score for each line of each song, kept between visits: { songId: [score, ...] }.
+let songScores = {};
+try {
+  songScores = JSON.parse(localStorage.getItem("haki-song-scores")) || {};
+} catch {}
+
+function saveSongScore(score) {
+  const best = (songScores[currentGroup().id] ||= []);
+  best[pos().item] = Math.max(best[pos().item] ?? 0, score);
+  try {
+    localStorage.setItem("haki-song-scores", JSON.stringify(songScores));
+  } catch {}
+}
+
+// One dot per line, colored by your best score on it. Tap a dot to jump to that line.
+function renderLineDots() {
+  $("line-dots").hidden = !inSongs();
+  if (!inSongs()) return;
+  const best = songScores[currentGroup().id] || [];
+  $("line-dots").replaceChildren(
+    ...currentPhrases().map((_, i) => {
+      const dot = document.createElement("button");
+      dot.className = `dot${i === pos().item ? " active" : ""}`;
+      const score = best[i];
+      if (score != null) {
+        dot.style.background = scoreColor(score);
+        dot.style.borderColor = scoreColor(score);
+      }
+      dot.title = score != null ? `Line ${i + 1}: best ${score}` : `Line ${i + 1}`;
+      dot.setAttribute("aria-label", dot.title);
+      dot.onclick = () => goTo(i);
+      return dot;
+    }),
+  );
+}
+
+function showSongProgress(score) {
+  saveSongScore(score);
+  renderLineDots();
+
+  const lines = currentPhrases().length;
+  const last = pos().item === lines - 1;
+  const sung = (songScores[currentGroup().id] || []).filter((s) => s != null);
+  const average = Math.round(sung.reduce((a, b) => a + b, 0) / sung.length);
+
+  $("song-next").hidden = false;
+  $("song-summary").textContent = last
+    ? `Song finished. ${sung.length} of ${lines} lines sung, average best score ${average}.`
+    : "";
+  $("next-line").textContent = last ? "Start over ↺" : "Next line ›";
+}
+
+$("next-line").onclick = () => goTo(pos().item + 1);
 
 // ---------- "Start speaking" ding ----------
 
@@ -96,8 +167,9 @@ document.querySelectorAll(".tab").forEach((tab) => {
   tab.onclick = () => {
     document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t === tab));
     state.mode = tab.dataset.mode;
-    $("target-card").hidden = state.mode !== "practice";
-    resetOutput();
+    $("target-card").hidden = state.mode === "free";
+    renderModules();
+    showPhrase();
   };
 });
 
@@ -255,9 +327,13 @@ function scheduleTranslation(arabic, delay = 700) {
 }
 
 // If the speaker said one of the practice phrases, use its hand-written English
-// instead of a machine guess. Checks the current phrase first, then every module.
+// instead of a machine guess. Checks the current phrase first, then every module and song.
 function knownTranslation(arabic) {
-  const candidates = [...(state.mode === "practice" ? [currentPhrase()] : []), ...MODULES.flatMap((m) => m.phrases)];
+  const candidates = [
+    ...(state.mode !== "free" ? [currentPhrase()] : []),
+    ...MODULES.flatMap((m) => m.phrases),
+    ...SONGS.flatMap((s) => s.lines),
+  ];
   for (const phrase of candidates) {
     if (phraseSimilarity(phrase.arabic, arabic) >= 0.85) return phrase.english;
   }
@@ -329,14 +405,13 @@ function assess(heard) {
     : null;
 
   // Scoring compares against a target phrase, so free talk shows the translation only.
-  if (state.mode !== "practice") {
+  if (state.mode === "free") {
     $("result-note").hidden = false;
     return;
   }
-  renderAssessment({
-    ...scoreLocally({ phrase: currentPhrase(), heard, alternatives: state.alternatives, confidence }),
-    heard,
-  });
+  const assessment = scoreLocally({ phrase: currentPhrase(), heard, alternatives: state.alternatives, confidence });
+  renderAssessment({ ...assessment, heard });
+  if (inSongs()) showSongProgress(Math.max(0, Math.min(100, assessment.score)));
 }
 
 function scoreColor(score) {
@@ -394,11 +469,14 @@ function resetOutput() {
   $("live-en").innerHTML = '<span class="placeholder">Translation appears here as you speak</span>';
   $("slang-hints").hidden = true;
   $("result").hidden = true;
+  $("song-next").hidden = true;
 }
 
 try {
-  const saved = MODULES.findIndex((m) => m.id === localStorage.getItem("haki-module"));
-  if (saved >= 0) state.moduleIndex = saved;
+  const savedModule = MODULES.findIndex((m) => m.id === localStorage.getItem("haki-module"));
+  if (savedModule >= 0) state.pos.practice.group = savedModule;
+  const savedSong = SONGS.findIndex((s) => s.id === localStorage.getItem("haki-song"));
+  if (savedSong >= 0) state.pos.songs.group = savedSong;
 } catch {}
 
 renderModules();

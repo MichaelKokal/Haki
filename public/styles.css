@@ -139,6 +139,43 @@ main { max-width: 720px; margin: 0 auto; padding: 8px 16px 48px; }
 .target-nav { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
 .focus { font-size: 13px; margin: 12px 0 0; }
 
+.song-meta { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
+.song-title { font-family: "Noto Naskh Arabic", serif; font-size: 16px; color: var(--text); }
+.line-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 10px; }
+.dot {
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--muted);
+  background: transparent;
+  cursor: pointer;
+}
+.dot.active { outline: 2px solid var(--accent); outline-offset: 2px; }
+.song-next {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.song-next[hidden] { display: none; }
+.song-next p { margin: 0; }
+.next-line {
+  margin-left: auto;
+  border: 0;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
 .icon-btn {
   border: 1px solid var(--line);
   background: transparent;
