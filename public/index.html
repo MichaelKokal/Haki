@@ -30,6 +30,7 @@
       <button class="tab active" data-mode="practice" role="tab">Practice a phrase</button>
       <button class="tab" data-mode="free" role="tab">Free talk</button>
       <button class="tab" data-mode="songs" role="tab">Songs</button>
+      <button class="tab" data-mode="quiz" role="tab">Quiz</button>
     </div>
 
     <section id="unsupported" class="notice" hidden>
@@ -60,14 +61,32 @@
       </div>
     </section>
 
-    <section class="mic-wrap">
+    <section id="quiz-card" class="card target quiz" hidden>
+      <div id="quiz-modules" class="modules" role="tablist" aria-label="Quiz topics"></div>
+      <p id="quiz-score" class="muted small"></p>
+      <div class="listen-row">
+        <button id="quiz-play" class="ghost-btn quiz-play">🔊 Play</button>
+        <button id="quiz-slow" class="ghost-btn">🐢 Slow</button>
+      </div>
+      <p id="quiz-prompt" class="quiz-prompt"></p>
+      <div id="quiz-choices" class="choices"></div>
+      <div id="quiz-reveal" class="quiz-reveal" hidden>
+        <p id="quiz-ar" class="arabic" lang="ar" dir="rtl"></p>
+        <p id="quiz-tr" class="translit"></p>
+        <p id="quiz-en" class="english"></p>
+        <p id="quiz-note" class="usage-note" hidden></p>
+      </div>
+      <button id="quiz-next" class="next-line quiz-next" hidden>Next ›</button>
+    </section>
+
+    <section id="mic-wrap" class="mic-wrap">
       <button id="mic" class="mic" aria-label="Start speaking">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2Z"/></svg>
       </button>
       <p id="mic-hint" class="muted">Tap and speak</p>
     </section>
 
-    <section class="card live">
+    <section id="live-card" class="card live">
       <div class="live-row">
         <span class="label">You said</span>
         <p id="live-ar" class="arabic" lang="ar" dir="rtl"><span class="placeholder">…</span></p>

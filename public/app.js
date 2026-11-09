@@ -2,6 +2,7 @@ import { MODULES } from "./phrases.js";
 import { scoreLocally, normalize, phraseSimilarity } from "./scorer.js";
 import { findSlang } from "./slang.js";
 import { SONGS } from "./songs.js";
+import { initQuiz } from "./quiz.js";
 
 const $ = (id) => document.getElementById(id);
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -166,8 +167,13 @@ function ding() {
 document.querySelectorAll(".tab").forEach((tab) => {
   tab.onclick = () => {
     document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t === tab));
+    if (state.listening) stopListening();
     state.mode = tab.dataset.mode;
-    $("target-card").hidden = state.mode === "free";
+    const quiz = state.mode === "quiz";
+    $("target-card").hidden = state.mode === "free" || quiz;
+    $("quiz-card").hidden = !quiz;
+    $("mic-wrap").hidden = quiz;
+    $("live-card").hidden = quiz;
     renderModules();
     showPhrase();
   };
@@ -481,3 +487,4 @@ try {
 
 renderModules();
 showPhrase();
+initQuiz({ speak });

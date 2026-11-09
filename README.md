@@ -18,6 +18,7 @@ Tap the mic and say a phrase. Haki shows your Arabic as you speak, translates it
 - **Real spoken dialect, not formal Arabic:** biddi, mish, ma baʿrifsh, hād/hāy, ishi, zāki, hayni jāy…
 - **Four dialects:** Palestinian (default), Jordanian, Lebanese, Syrian.
 - **Free talk mode** to say anything and see it translated.
+- **Listening quiz:** hear a phrase without seeing it and pick what it means from four choices. Quiz all phrases or one topic, and track your score and best streak. Keys 1–4 answer, Enter goes to the next one.
 - **Completely free:** no accounts or API keys.
 
 ## Getting started
@@ -52,6 +53,7 @@ public/
   scorer.js         Pronunciation scoring and tips
   phrases.js        Practice modules and phrases
   songs.js          Songs, split into lines to practice
+  quiz.js           Listening quiz
   slang.js          Slang dictionary and matcher
   styles.css        Styles (light and dark mode)
 ```
