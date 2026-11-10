@@ -49,10 +49,13 @@ app.get("/api/speak", async (req, res) => {
   const voices = VOICES[req.query.dialect] || VOICES["ar-PS"];
   const voice = req.query.gender === "male" ? voices.male : voices.female;
   const slow = req.query.slow === "1";
+  // Song lines are delivered slower than speech, closer to how they're sung.
+  const song = req.query.song === "1";
+  const rate = song ? (slow ? 0.6 : 0.8) : slow ? 0.7 : 0.95;
 
-  const key = `${voice}|${slow}|${text}`;
+  const key = `${voice}|${rate}|${text}`;
   try {
-    if (!audioCache.has(key)) audioCache.set(key, await synthesize(text, voice, slow ? 0.7 : 0.95));
+    if (!audioCache.has(key)) audioCache.set(key, await synthesize(text, voice, rate));
     res.setHeader("Content-Type", "audio/mpeg");
     res.setHeader("Cache-Control", "public, max-age=86400");
     res.end(audioCache.get(key));

@@ -198,6 +198,7 @@ async function speak(text, { slow = false, button = null } = {}) {
     dialect: $("dialect").value,
     gender: $("voice").value,
     slow: slow ? "1" : "0",
+    song: inSongs() ? "1" : "0",
   });
   player.src = `/api/speak?${params}`;
   try {
